@@ -44,7 +44,12 @@ class Pawn < Piece
   def hits_piece?(position)
     x, y = position
     !board.grid[x][y].nil?
+    # return false unless board.grid[x][y]
   end
+
+  # def is_empty?(position)
+    #board.grid[x][y] == nil
+  # end
 
   def cannot_take_piece?(position)
     x, y = position

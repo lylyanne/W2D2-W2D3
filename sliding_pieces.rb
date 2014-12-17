@@ -21,6 +21,7 @@ class SlidingPiece < Piece
         break if capture_piece(current_pos)
       end
     end
+    # legal_moves = moves.reject { | move | move_into_check?(move) }
     moves
   end
 

@@ -6,10 +6,28 @@ require_relative 'queen'
 require_relative 'knight'
 
 class Board
+  DECIPHER_MOVE = {
+           "a" => 0,
+           "b" => 1,
+           "c" => 2,
+           "d" => 3,
+           "e" => 4,
+           "f" => 5,
+           "g" => 6,
+           "h" => 7,
+           "8" => 0,
+           "7" => 1,
+           "6" => 2,
+           "5" => 3,
+           "4" => 4,
+           "3" => 5,
+           "2" => 6,
+           "1" => 7 }
+
   attr_accessor :grid
-  def initialize
-    @grid = Array.new(8) {Array.new(8)}
-    create_board
+  def initialize(grid = Array.new(8) {Array.new(8)}, create = true )
+    @grid = grid
+    create_board if create == true
   end
 
   def self.offboard?(position)
@@ -69,8 +87,8 @@ class Board
       (0..7).each do |column|
         pos = [row, column]
         next if self[pos].nil? || self[pos].color == color
-        p "#{self[pos].moves} #{self[pos].class}"
-        # return true if self[pos].moves.include?(king_position)
+        #p "#{self[pos].moves} #{self[pos].class}"
+         return true if self[pos].moves.include?(king_position)
       end
     end
     false
@@ -85,15 +103,51 @@ class Board
     end
   end
 
+  def get_move
+    puts "Enter your move:"
+    start_move, end_move = gets.chomp.gsub(" ","").split(",")
+    start_move = [DECIPHER_MOVE[start_move[0]], DECIPHER_MOVE[start_move[1]]]
+    end_move = [DECIPHER_MOVE[end_move[0]], DECIPHER_MOVE[end_move[1]]]
+    #possible raise if entered values are not in the dictionary
+    [start_move, end_move]
+  end
+
+  def move (start, end_pos)
+    #raise IllegalMove if #cant legally do the move or the start is empty
+      # self[end_pos].pos =
+      # self[end_pos] = nil
+      self[end_pos] = self[start]
+      p self[end_pos].class
+      self[end_pos].pos = end_pos
+      self[start] = nil
+  end
+
+  def dup
+    duped_grid = grid.map(&:dup)
+    self.class.new(duped_grid, false)
+  end
 
 end
 
 
-b = Board.new
-b.grid[0][3] = Queen.new([0,3], :white, b)
- pos = [0, 3]
- p b[pos].color
-p b.in_check?(:black)
-
-# in_check is still not working
-# did the sliding_piece cawpture_piece, but thats it
+b = Board.new(grid = Array.new(8) {Array.new(8)}, create = false)
+b.grid[7][7] = King.new([7,7], :white, b)
+b.grid[7][6] = Queen.new([7,6], :white, b)
+b.grid[2][7] = Rook.new([2,7], :black, b)
+a = b.dup
+p a.grid[7][7].class
+p b.grid[7][6].moves
+# b.grid[5][5] = Pawn.new([5,5], :black, b)
+# p b.grid[1][3].moves
+#  # pos = [1, 3]
+#  # p b[pos].color
+# # p b.in_check?(:black)
+# # b.get_move
+# p b.grid[6][4].class
+# p b.grid[5][5].class
+# b.move([6,4], [5,5])
+# p b.grid[6][4].class
+# p b.grid[5][5].class
+# # did the sliding_piece cawpture_piece, but thats it
+# c = b.dup
+# p c.grid[5][5].class
