@@ -4,34 +4,26 @@ require_relative 'bishop'
 require_relative 'king'
 require_relative 'queen'
 require_relative 'knight'
+require 'byebug'
+
+class IllegalMoveError < ArgumentError
+end
 
 class Board
-  DECIPHER_MOVE = {
-           "a" => 0,
-           "b" => 1,
-           "c" => 2,
-           "d" => 3,
-           "e" => 4,
-           "f" => 5,
-           "g" => 6,
-           "h" => 7,
-           "8" => 0,
-           "7" => 1,
-           "6" => 2,
-           "5" => 3,
-           "4" => 4,
-           "3" => 5,
-           "2" => 6,
-           "1" => 7 }
-
   attr_accessor :grid
-  def initialize(grid = Array.new(8) {Array.new(8)}, create = true )
-    @grid = grid
-    create_board if create == true
+
+  def initialize( options = {})
+    default = {:grid => Array.new(8) { Array.new(8) }, :create => true}
+
+    options = default.merge(options)
+    @grid = options[:grid]
+    create_board if options[:create]
+    # p @grid
+    # p options
   end
 
   def self.offboard?(position)
-    x,y = position
+    x, y = position
     !(x.between?(0,7) && y.between?(0,7))
   end
 
@@ -51,8 +43,8 @@ class Board
 
   def create_board
     0.upto(7) do |column|
-      self.grid[1][column] = Pawn.new( [1, column], :black, self)
-      self.grid[6][column] = Pawn.new( [6, column], :white, self)
+      self[[1, column]] = Pawn.new( [1, column], :black, self)
+      self[[6, column]] = Pawn.new( [6, column], :white, self)
     end
 
     rook_positions = [0,7].repeated_permutation(2).to_a.each do |rook|
@@ -87,10 +79,10 @@ class Board
       (0..7).each do |column|
         pos = [row, column]
         next if self[pos].nil? || self[pos].color == color
-        #p "#{self[pos].moves} #{self[pos].class}"
          return true if self[pos].moves.include?(king_position)
       end
     end
+
     false
   end
 
@@ -103,51 +95,64 @@ class Board
     end
   end
 
-  def get_move
-    puts "Enter your move:"
-    start_move, end_move = gets.chomp.gsub(" ","").split(",")
-    start_move = [DECIPHER_MOVE[start_move[0]], DECIPHER_MOVE[start_move[1]]]
-    end_move = [DECIPHER_MOVE[end_move[0]], DECIPHER_MOVE[end_move[1]]]
-    #possible raise if entered values are not in the dictionary
-    [start_move, end_move]
-  end
-
-  def move (start, end_pos)
-    #raise IllegalMove if #cant legally do the move or the start is empty
-      # self[end_pos].pos =
-      # self[end_pos] = nil
-      self[end_pos] = self[start]
-      p self[end_pos].class
-      self[end_pos].pos = end_pos
+  def move!(start, end_pos)
+      self[end_pos] = self[start] #reassigns position on the board
+      self[end_pos].pos = end_pos #reassigns pos of the piece
+      # byebug
       self[start] = nil
   end
 
-  def dup
-    duped_grid = grid.map(&:dup)
-    self.class.new(duped_grid, false)
+  def move(start, end_pos)
+    #p self[start].class
+    raise IllegalMoveError if self[start].nil?
+    legal_moves = self[start].valid_moves
+    p "Legal moves: #{legal_moves}"
+    raise IllegalMoveError unless legal_moves.include?(end_pos)
   end
 
+  def dup
+    array_of_pieces = grid.flatten.compact
+    # debugger
+    board_dup = Board.new(:create => false)
+    array_of_pieces.each do |p|
+      board_dup[p.pos] = p.class.new(p.pos.dup, p.color, board_dup)
+    end
+    board_dup
+  end
+
+  def checkmate?(color)
+    # get all white pieces
+    valid_moves_status = false
+    same_color_pieces = grid.flatten.compact.select { |p| p.color == color}
+    #p same_color_pieces
+    same_color_pieces.each do |piece|
+      #p piece.valid_moves
+      valid_moves_status = true if piece.valid_moves.empty?
+    end
+
+    in_check?(color) && valid_moves_status
+    #iterate over all white pieces, any valid moves?
+    #if false, true, its checkmate
+    #if true, then not checkmate
+  end
+
+  def render
+    # print (0...8).each { |y| print "#{y.to_s} "}
+    puts
+    grid.map.with_index do |row, i|
+      # print "#{i.to_s} "
+      row.map do |tile|
+        tile.nil? ? "_ " : "#{tile.symbol} "
+      end.join("")
+    end.join("\n")
+  end
 end
 
-
-b = Board.new(grid = Array.new(8) {Array.new(8)}, create = false)
-b.grid[7][7] = King.new([7,7], :white, b)
-b.grid[7][6] = Queen.new([7,6], :white, b)
-b.grid[2][7] = Rook.new([2,7], :black, b)
-a = b.dup
-p a.grid[7][7].class
-p b.grid[7][6].moves
-# b.grid[5][5] = Pawn.new([5,5], :black, b)
-# p b.grid[1][3].moves
-#  # pos = [1, 3]
-#  # p b[pos].color
-# # p b.in_check?(:black)
-# # b.get_move
-# p b.grid[6][4].class
-# p b.grid[5][5].class
-# b.move([6,4], [5,5])
-# p b.grid[6][4].class
-# p b.grid[5][5].class
-# # did the sliding_piece cawpture_piece, but thats it
-# c = b.dup
-# p c.grid[5][5].class
+if __FILE__ == $PROGRAM_NAME
+  b = Board.new(:create => true)
+  # p b.move!([7,6], [5,5])
+  # puts b.render
+  # p b.move!([5,5], [3,4])
+  # puts b.render
+  # p b.grid[3][4].class
+end

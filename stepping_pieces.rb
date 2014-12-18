@@ -1,8 +1,6 @@
 require_relative './piece.rb'
 
 class SteppingPiece < Piece
-
-
   def moves
     moves = []
     move_dirs.each do |offset|
@@ -10,7 +8,6 @@ class SteppingPiece < Piece
       current_pos = [current_pos[0] + offset[0], current_pos[1] + offset[1]]
       moves << current_pos unless Board.offboard?(current_pos) || hits_piece?(current_pos)
     end
-    # legal_moves = moves.reject { |move| move_into_check?(move) }
     moves
   end
 

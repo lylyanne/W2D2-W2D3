@@ -4,7 +4,8 @@ class Knight < SteppingPiece
   KNIGHT_MOVES = [[1,2], [1,-2], [-1,2], [-1,-2], [2,1], [2,-1], [-2,1], [-2,-1]]
 
   def symbol
-    :n
+    color == :white ? '♘' : '♞'
+    # :n
   end
 
   def move_dirs

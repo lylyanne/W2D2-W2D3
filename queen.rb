@@ -1,4 +1,5 @@
 require_relative './sliding_pieces.rb'
+# encoding: utf-8
 
 class Queen < SlidingPiece
 
@@ -7,7 +8,8 @@ class Queen < SlidingPiece
   end
 
   def symbol
-    :q
+    color == :white ? '♕' : '♛'
+    # :q
   end
 end
 

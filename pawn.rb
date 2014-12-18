@@ -1,4 +1,6 @@
 require_relative './piece.rb'
+# encoding: utf-8
+
 # require_relative './board.rb'
 
 class Pawn < Piece
@@ -6,7 +8,8 @@ class Pawn < Piece
   MOVES = [[1, 1], [1, -1]]
 
   def symbol
-    :p
+    color == :white ? '♙' : '♟'
+    # :p
   end
 
   def move_dir

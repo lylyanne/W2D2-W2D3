@@ -7,7 +7,8 @@ class Bishop < SlidingPiece
   end
 
   def symbol
-    :b
+    color == :white ? '♗' : '♝'
+    # :b
   end
 end
 

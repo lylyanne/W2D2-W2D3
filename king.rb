@@ -4,7 +4,8 @@ class King < SteppingPiece
   KING_MOVES = [[0, 1], [1, 0], [0, -1], [-1, 0], [1, 1], [-1, -1], [1,-1], [-1,1]]
 
   def symbol
-    :k
+    color == :white ? '♔' : '♚'
+    # :k
   end
 
   def move_dirs
