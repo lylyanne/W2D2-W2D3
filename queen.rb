@@ -8,7 +8,7 @@ class Queen < SlidingPiece
   end
 
   def symbol
-    color == :white ? '♕' : '♛'
+    color == :white ? '♕'.colorize(:white) : '♛'.colorize(:black)
     # :q
   end
 end

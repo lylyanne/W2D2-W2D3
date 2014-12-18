@@ -5,6 +5,8 @@ require_relative 'king'
 require_relative 'queen'
 require_relative 'knight'
 require 'byebug'
+require "colorize"
+require 'io/console'
 
 class IllegalMoveError < ArgumentError
 end
@@ -106,7 +108,6 @@ class Board
     #p self[start].class
     raise IllegalMoveError if self[start].nil?
     legal_moves = self[start].valid_moves
-    p "Legal moves: #{legal_moves}"
     raise IllegalMoveError unless legal_moves.include?(end_pos)
   end
 
@@ -137,22 +138,18 @@ class Board
   end
 
   def render
-    # print (0...8).each { |y| print "#{y.to_s} "}
+    print " "; ("a".."h").to_a.each { |y| print "#{y} "}
     puts
     grid.map.with_index do |row, i|
-      # print "#{i.to_s} "
-      row.map do |tile|
-        tile.nil? ? "_ " : "#{tile.symbol} "
-      end.join("")
+      "#{(8-i).to_s}".concat(
+      row.map.with_index do |tile, j|
+        color = (i % 2 == j % 2 ? :red : :blue)
+        tile.nil? ? "  ".colorize(:background => color) : "#{tile.symbol} ".colorize(:background => color)
+      end.join(""))
     end.join("\n")
   end
 end
 
 if __FILE__ == $PROGRAM_NAME
-  b = Board.new(:create => true)
-  # p b.move!([7,6], [5,5])
-  # puts b.render
-  # p b.move!([5,5], [3,4])
-  # puts b.render
-  # p b.grid[3][4].class
+  b = Board.new
 end

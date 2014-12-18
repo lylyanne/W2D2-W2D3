@@ -7,7 +7,7 @@ class Rook < SlidingPiece
   end
 
   def symbol
-    color == :white ? '♖' : '♜'
+    color == :white ? '♖'.colorize(:white) : '♜'.colorize(:black)
     # :r
   end
 end

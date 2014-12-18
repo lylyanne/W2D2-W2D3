@@ -8,7 +8,7 @@ class Pawn < Piece
   MOVES = [[1, 1], [1, -1]]
 
   def symbol
-    color == :white ? '♙' : '♟'
+    color == :white ? '♙'.colorize(:white) : '♟'.colorize(:black)
     # :p
   end
 

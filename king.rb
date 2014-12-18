@@ -4,7 +4,7 @@ class King < SteppingPiece
   KING_MOVES = [[0, 1], [1, 0], [0, -1], [-1, 0], [1, 1], [-1, -1], [1,-1], [-1,1]]
 
   def symbol
-    color == :white ? '♔' : '♚'
+    color == :white ? '♔'.colorize(:white) : '♚'.colorize(:black)
     # :k
   end
 

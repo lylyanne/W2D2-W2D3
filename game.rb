@@ -24,9 +24,10 @@ class Game
         retry
       end
       board.move!(start_pos,end_pos)
-
       players.rotate!
     end
+    puts board.render
+    puts "Checkmate, #{my_color[players[1]]}"
   end
 
   def move_correct_color?(start_pos)
@@ -81,30 +82,3 @@ hp1 = ChessHumanPlayer.new
 hp2 = ChessHumanPlayer.new
 g = Game.new(hp1, hp2)
 g.play
-
-# DECIPHER_MOVE = {
-#   "a" => 0,
-#   "b" => 1,
-#   "c" => 2,
-#   "d" => 3,
-#   "e" => 4,
-#   "f" => 5,
-#   "g" => 6,
-#   "h" => 7,
-#   "8" => 0,
-#   "7" => 1,
-#   "6" => 2,
-#   "5" => 3,
-#   "4" => 4,
-#   "3" => 5,
-#   "2" => 6,
-#   "1" => 7 }
-#
-#   start_pos = "n12"
-#   end_pos = "p2"
-#   p [DECIPHER_MOVE[start_pos[1]], DECIPHER_MOVE[start_pos[0]]]
-#   p [DECIPHER_MOVE[end_pos[1]], DECIPHER_MOVE[end_pos[0]]]
-
-# e2, e4
-# a7,a6
-# e4,e5

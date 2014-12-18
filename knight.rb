@@ -4,7 +4,7 @@ class Knight < SteppingPiece
   KNIGHT_MOVES = [[1,2], [1,-2], [-1,2], [-1,-2], [2,1], [2,-1], [-2,1], [-2,-1]]
 
   def symbol
-    color == :white ? '♘' : '♞'
+    color == :white ? '♘'.colorize(:white) : '♞'.colorize(:black)
     # :n
   end
 
